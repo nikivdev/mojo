@@ -1,0 +1,11 @@
+# flow
+
+[[tasks]]
+name = "setup"
+command = "uv venv && source .venv/bin/activate && uv pip install mojo --index-url https://dl.modular.com/public/nightly/python/simple/ --prerelease allow && echo '\\nRun: source .venv/bin/activate.fish'"
+description = "Create venv and install Mojo"
+
+[[tasks]]
+name = "dev"
+command = ""
+description = "Start dev server (fill me)"
