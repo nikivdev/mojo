@@ -1,0 +1,52 @@
+# flow
+
+[[tasks]]
+name = "setup"
+command = "uv venv && source .venv/bin/activate && uv pip install mojo max --index-url https://dl.modular.com/public/nightly/python/simple/ --prerelease allow && uv pip install -e . && echo '\\nRun: source .venv/bin/activate.fish'"
+description = "Create venv and install Mojo + dependencies"
+
+[[tasks]]
+name = "run"
+command = "source .venv/bin/activate && python main.py"
+description = "Run full GPT-2 example"
+
+# Learning steps - run each to understand the components
+[[tasks]]
+name = "step1"
+command = "source .venv/bin/activate && python -c \"from main import GPT2Config; c = GPT2Config(); print('GPT-2 Config:'); print(f'  vocab_size: {c.vocab_size} (tokens in vocabulary)'); print(f'  n_positions: {c.n_positions} (max sequence length)'); print(f'  n_embd: {c.n_embd} (embedding dimension)'); print(f'  n_layer: {c.n_layer} (transformer blocks)'); print(f'  n_head: {c.n_head} (attention heads)'); print(f'  head_dim: {c.n_embd // c.n_head} (per-head dimension)')\""
+description = "Step 1: Understand GPT-2 config"
+
+[[tasks]]
+name = "step2"
+command = "source .venv/bin/activate && python -c \"from main import LayerNorm; from max.experimental.tensor import Tensor; ln = LayerNorm(768); print('LayerNorm normalizes activations across embedding dim'); print(f'  weight shape: {ln.weight.shape} (learnable scale)'); print(f'  bias shape: {ln.bias.shape} (learnable shift)'); print('  Formula: (x - mean) / std * weight + bias')\""
+description = "Step 2: Layer normalization"
+
+[[tasks]]
+name = "step3"
+command = "source .venv/bin/activate && python -c \"print('Causal Mask - prevents looking at future tokens'); print(); print('For sequence length 4:'); print('  [0, -inf, -inf, -inf]  <- token 0 sees only itself'); print('  [0,    0, -inf, -inf]  <- token 1 sees 0,1'); print('  [0,    0,    0, -inf]  <- token 2 sees 0,1,2'); print('  [0,    0,    0,    0]  <- token 3 sees all'); print(); print('After softmax, -inf becomes 0 (no attention)')\""
+description = "Step 3: Causal masking explained"
+
+[[tasks]]
+name = "step4"
+command = "source .venv/bin/activate && python -c \"from main import GPT2Attention, GPT2Config; a = GPT2Attention(GPT2Config()); print('Multi-Head Attention'); print(f'  n_head: {a.n_head} parallel attention heads'); print(f'  head_dim: {a.head_dim} dimension per head'); print(f'  c_attn: projects to Q,K,V ({a.n_embd} -> {3*a.n_embd})'); print(f'  c_proj: projects output back ({a.n_embd} -> {a.n_embd})'); print(); print('Flow: x -> Q,K,V -> attention scores -> weighted V -> output')\""
+description = "Step 4: Multi-head attention"
+
+[[tasks]]
+name = "step5"
+command = "source .venv/bin/activate && python -c \"from main import GPT2MLP, GPT2Config; m = GPT2MLP(GPT2Config()); print('MLP (Feed-Forward Network)'); print(f'  c_fc: expand {768} -> {768*4} (4x expansion)'); print(f'  GELU activation (smooth ReLU)'); print(f'  c_proj: contract {768*4} -> {768}'); print(); print('This is where the model stores knowledge!')\""
+description = "Step 5: MLP feed-forward"
+
+[[tasks]]
+name = "step6"
+command = "source .venv/bin/activate && python -c \"print('Transformer Block = Attention + MLP with residuals'); print(); print('  x ─────────────────────────┐'); print('  │                           │'); print('  ▼                           │'); print('  LayerNorm                   │'); print('  │                           │'); print('  ▼                           │'); print('  Attention ──────────────────+ (residual)'); print('  │                           │'); print('  ▼                           │'); print('  LayerNorm                   │'); print('  │                           │'); print('  ▼                           │'); print('  MLP ────────────────────────+ (residual)'); print('  │'); print('  ▼'); print('  output')\""
+description = "Step 6: Transformer block structure"
+
+[[tasks]]
+name = "step7"
+command = "source .venv/bin/activate && python -c \"from main import GPT2, GPT2Config; m = GPT2(GPT2Config()); print('Full GPT-2 Model'); print(); print('  input_ids (tokens)'); print('       │'); print('       ▼'); print('  wte: Token Embedding (50257 -> 768)'); print('       +'); print('  wpe: Position Embedding (1024 -> 768)'); print('       │'); print('       ▼'); print(f'  h: {12}x Transformer Blocks'); print('       │'); print('       ▼'); print('  ln_f: Final LayerNorm'); print('       │'); print('       ▼'); print('  lm_head: Output (768 -> 50257 logits)')\""
+description = "Step 7: Full model architecture"
+
+[[tasks]]
+name = "step8"
+command = "source .venv/bin/activate && python -c \"print('Text Generation (Autoregressive)'); print(); print('Prompt: \\\"Hello\\\"'); print(); print('Step 1: [Hello] -> model -> logits -> sample -> \\\" world\\\"'); print('Step 2: [Hello world] -> model -> logits -> sample -> \\\",\\\"'); print('Step 3: [Hello world,] -> model -> logits -> sample -> ...'); print(); print('Temperature controls randomness:'); print('  temp=0: always pick highest probability (greedy)'); print('  temp=0.8: balanced creativity'); print('  temp=1.5: very random/creative')\""
+description = "Step 8: How generation works"

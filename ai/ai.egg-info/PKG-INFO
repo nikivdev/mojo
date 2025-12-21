@@ -1,0 +1,19 @@
+Metadata-Version: 2.4
+Name: ai
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: numpy
+Requires-Dist: torch
+Requires-Dist: transformers
+
+# AI in Moj
+
+## Setup
+
+Using [flow](https://github.com/nikivdev/flow), run `f setup`.
+
+## Tasks
+
+Search through all available tasks by running `f`.
