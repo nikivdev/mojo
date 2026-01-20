@@ -28,3 +28,14 @@ private
 .npm-cache
 
 ext/
+
+# flow
+.ai/internal/
+.ai/web/
+.claude/
+.codex/
+.flox/
+
+.ai/todos/*.bike
+
+.ai/review-log.jsonl

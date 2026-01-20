@@ -1,0 +1,14 @@
+version = 1
+
+[[tasks]]
+name = "setup"
+command = "echo TODO: add setup command"
+description = "Install tools and dependencies"
+shortcuts = ["s"]
+
+[[tasks]]
+name = "dev"
+command = "echo TODO: add dev command"
+description = "Run development server"
+dependencies = ["setup"]
+shortcuts = ["d"]
